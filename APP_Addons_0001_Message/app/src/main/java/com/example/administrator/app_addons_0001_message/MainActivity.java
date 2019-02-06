@@ -1,15 +1,14 @@
 package com.example.administrator.app_addons_0001_message;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Printer;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
-import	android.view.View;
-import	android.util.Log;
-import android.widget.TabHost;
+import android.os.HandlerThread;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MessageTest";
@@ -17,7 +16,9 @@ public class MainActivity extends AppCompatActivity {
     private Thread mythread = null;
     private MyThread mythread2 = null;
     private Handler mHandler;
+    private Handler mHandler3;
     private  int mMessageCount = 0;
+    private HandlerThread mythread3;
 
     class MyRunndble implements Runnable {
 
@@ -80,6 +81,14 @@ public class MainActivity extends AppCompatActivity {
                      ButtonCount++;
                      Message msg = new Message();
                      mHandler.sendMessage(msg);
+
+                     mHandler3.post(new Runnable() {
+                         @Override
+                         public void run() {
+                             Log.d(TAG,"get Messsage for Thread3"+mMessageCount);
+                             mMessageCount++;
+                         }
+                     });
             }
         });
         mythread = new Thread(new MyRunndble(), "MessageTestThread");
@@ -95,6 +104,15 @@ public class MainActivity extends AppCompatActivity {
                 mMessageCount++;
                 return false;
             }
+
         });
+
+
+
+        mythread3 = new HandlerThread("MessageTestThread3");
+        mythread3.start();
+
+        mHandler3 = new Handler(mythread3.getLooper());
+
     }
 }
